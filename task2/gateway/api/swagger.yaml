@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  title: GitHub Repo Info Gateway
+  version: 1.0.0
+paths:
+  /repo:
+    get:
+      summary: Get repository info
+      parameters:
+        - name: owner
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  stars:
+                    type: integer
+                  forks:
+                    type: integer
+                  date:
+                    type: string
