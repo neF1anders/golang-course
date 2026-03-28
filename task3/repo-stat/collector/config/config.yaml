@@ -1,0 +1,12 @@
+app:
+  app_name: "repo-stat-collector"
+
+http:
+  address: "localhost:50051"
+  timeout: "5s"
+
+logger:
+  log_level: "DEBUG"
+
+services:
+  processor: "localhost:1234"
