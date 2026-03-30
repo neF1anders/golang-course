@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-option go_package = "collector/proto"; 
+package collector.v1;
+
+option go_package = "repo-stat/proto/collector"; 
 
 service Collector{
     rpc GetInfo(Data) returns (Repo) {}
