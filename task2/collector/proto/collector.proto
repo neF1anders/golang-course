@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "collector/proto"; 
+
+service Collector{
+    rpc GetInfo(Data) returns (Repo) {}
+}
+message Data {
+    string owner = 1;
+    string repo = 2;
+}
+message Repo {
+    string Name = 1;
+	string Description = 2;
+	int32 Stars = 3;
+	int32 Forks = 4;
+	string Date = 5;
+}
