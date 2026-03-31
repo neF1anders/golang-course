@@ -4,16 +4,32 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"repo-stat/api/internal/domain"
 	"repo-stat/api/internal/dto"
 	"repo-stat/api/internal/usecase"
 )
 
 func NewPingHandler(log *slog.Logger, ping *usecase.Ping) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		status := ping.Execute(r.Context())
-
+		processor_status, subscriber_status := ping.Execute(r.Context())
+		services := []dto.ServiceStatus{
+			{
+				Name:   "processor",
+				Status: string(processor_status),
+			},
+			{
+				Name:   "subscriber",
+				Status: string(subscriber_status),
+			},
+		}
+		var status string = "degraded"
+		if subscriber_status == processor_status &&
+			processor_status == domain.PingStatusUp {
+			status = "ok"
+		}
 		response := dto.PingResponse{
-			Reply: string(status),
+			Status:   status,
+			Services: services,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
