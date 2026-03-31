@@ -8,6 +8,8 @@ import (
 	"repo-stat/api/internal/adapter/processor"
 	"repo-stat/api/internal/adapter/subscriber"
 	"repo-stat/api/internal/usecase"
+
+	_ "repo-stat/api/docs"
 )
 
 func NewHandler(ctx context.Context, log *slog.Logger, cfg config.Config) (http.Handler, error) {

@@ -10,7 +10,8 @@ import (
 	"repo-stat/api/internal/controller/http"
 	"repo-stat/platform/httpserver"
 	"repo-stat/platform/logger"
-	//httpSwagger "github.com/swaggo/http-swagger"
+
+	_ "repo-stat/api/docs"
 )
 
 func run(ctx context.Context) error {
@@ -45,6 +46,11 @@ func run(ctx context.Context) error {
 	return nil
 }
 
+// @title           Repo Stat API
+// @version         1.0
+// @description     API for repository statistics
+// @host            localhost:8081
+// @BasePath        /
 func main() {
 	ctx := context.Background()
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)

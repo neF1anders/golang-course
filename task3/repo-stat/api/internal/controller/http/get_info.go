@@ -9,8 +9,22 @@ import (
 	"repo-stat/api/internal/dto"
 	"repo-stat/api/internal/usecase"
 	"strings"
+
+	_ "repo-stat/api/docs"
 )
 
+// RepoInfo godoc
+// @Summary Get repository info
+// @Description Get GitHub repository information
+// @Tags repositories
+// @Accept json
+// @Produce json
+// @Param url query string true "GitHub repo URL"
+// @Success 200 {object} dto.Repo
+// @Failure 400 {string} string
+// @Failure 404 {string} string
+// @Failure 503 {string} string
+// @Router /api/repositories/info [get]
 func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		repoURL := r.URL.Query().Get("url")
@@ -25,6 +39,7 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 		}
 		info, err := fetch.Execute(r.Context(), owner, repo)
 		if err != nil {
+			writeGRPCError(w, err)
 			log.Error("failed to execute fetch response", "error", err)
 		}
 		response := dto.Repo{
@@ -43,15 +58,34 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 	}
 }
 
+/*
+	func ParseGitHubRepo(rawURL string) (owner, repo string, err error) {
+		parts := strings.Split(strings.Trim(rawURL, "/"), "/")
+		if len(parts) < 2 {
+			return "", "", errors.New("invalid GitHub repo URL: missing owner or repo")
+		}
+		return parts[len(parts)-2], parts[len(parts)-1], nil
+	}
+*/
 func ParseGitHubRepo(rawURL string) (owner, repo string, err error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return "", "", err
 	}
-	// Ожидаем путь вида /owner/repo (возможно с trailing slash)
-	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	// Для SSH вида git@github.com:owner/repo.git путь будет "owner/repo.git"
+	path := strings.Trim(u.Path, "/")
+	if path == "" && u.Opaque != "" && strings.Contains(u.Opaque, ":") {
+		// Возможно, это SSH: git@github.com:owner/repo.git
+		parts := strings.SplitN(u.Opaque, ":", 2)
+		if len(parts) == 2 {
+			path = parts[1]
+		}
+	}
+	parts := strings.Split(path, "/")
 	if len(parts) < 2 {
 		return "", "", errors.New("invalid GitHub repo URL: missing owner or repo")
 	}
-	return parts[0], parts[1], nil
+	owner = parts[0]
+	repo = strings.TrimSuffix(parts[1], ".git")
+	return owner, repo, nil
 }

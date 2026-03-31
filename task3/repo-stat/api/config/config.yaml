@@ -2,7 +2,7 @@ app:
   app_name: "repo-stat-api"
 
 http:
-  address: "localhost:8081"
+  address: "0.0.0.0:8081"
   timeout: "5s"
 
 logger:
