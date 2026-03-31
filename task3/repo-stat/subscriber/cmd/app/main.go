@@ -16,7 +16,7 @@ import (
 
 func run(ctx context.Context) error {
 	var configPath string
-	flag.StringVar(&configPath, "config", "config.yaml", "server configuration file")
+	flag.StringVar(&configPath, "config", "subscriber/config/config.yaml", "server configuration file")
 	flag.Parse()
 
 	cfg := config.MustLoad(configPath)
@@ -34,7 +34,7 @@ func run(ctx context.Context) error {
 	}
 
 	subscriberpb.RegisterSubscriberServer(srv.GRPC(), pingServer)
-
+	log.Info(fmt.Sprintf("Subscriber gRPC server listening on :%v", cfg.GRPC.Address))
 	if err := srv.Run(ctx); err != nil {
 		return fmt.Errorf("run grpc server: %w", err)
 	}
