@@ -9,5 +9,5 @@ logger:
   log_level: "DEBUG"
 
 services:
-  api: "localhost:8081"
-  collector : "localhost:8084"
+  api: "api:8081"
+  collector : "collector:8084"

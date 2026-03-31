@@ -9,4 +9,4 @@ logger:
   log_level: "DEBUG"
 
 services:
-  processor: "localhost:8083"
+  processor: "processor:8083"

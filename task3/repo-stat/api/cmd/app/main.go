@@ -49,7 +49,6 @@ func run(ctx context.Context) error {
 // @title           Repo Stat API
 // @version         1.0
 // @description     API for repository statistics
-// @host            localhost:8081
 // @BasePath        /
 func main() {
 	ctx := context.Background()
