@@ -11,7 +11,7 @@ type App struct {
 }
 
 type Services struct {
-	Processor string `yaml:"processor" env:"PROCESSOR_ADDRESS" env-default:"localhost:1234"`
+	Processor string `yaml:"processor" env:"PROCESSOR_ADDRESS" env-default:"localhost:8084"`
 }
 
 type Config struct {
