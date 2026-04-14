@@ -54,19 +54,11 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			log.Error("failed to write ping response", "error", err)
+			return
 		}
 	}
 }
 
-/*
-	func ParseGitHubRepo(rawURL string) (owner, repo string, err error) {
-		parts := strings.Split(strings.Trim(rawURL, "/"), "/")
-		if len(parts) < 2 {
-			return "", "", errors.New("invalid GitHub repo URL: missing owner or repo")
-		}
-		return parts[len(parts)-2], parts[len(parts)-1], nil
-	}
-*/
 func ParseGitHubRepo(rawURL string) (owner, repo string, err error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {

@@ -35,21 +35,24 @@ func (c *Client) Fetch(owner, repo string) (*entity.Repo, error) {
 	resp, err := c.httpClient.Get(url)
 
 	if err != nil {
-		log.Fatalf("Failed to fetch from GitHub: %v", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("API return non-OK status: %v", resp.Status)
+		log.Printf("API return non-OK status: %v", resp.Status)
+		return nil, fmt.Errorf("GitHub api return: %d", resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response body: %v", err)
+		log.Printf("Error reading response body: %v", err)
+		return nil, fmt.Errorf("Reading response error: %d", err)
 	}
 	var response githubResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatalf("Error retrieving from JSON: %v", err)
+		log.Printf("Error retrieving from JSON: %v", err)
+		return nil, fmt.Errorf("Retriever returned: %d", err)
 	}
 	return &entity.Repo{
 		Name:        response.Name,
