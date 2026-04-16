@@ -41,6 +41,7 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 		if err != nil {
 			writeGRPCError(w, err)
 			log.Error("failed to execute fetch response", "error", err)
+			return
 		}
 		response := dto.Repo{
 			Name:        info.Name,
