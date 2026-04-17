@@ -7,11 +7,13 @@ option go_package = "repo-stat/proto/subscribe";
 service Subscribe{
     rpc Subscribe(Data) returns (SubReply) {}
     rpc Unsubscribe(Data) returns (SubReply) {}
-    rpc Subinfo() return (InfoReply)
+    rpc Subinfo(Empty) returns (InfoReply) {}
 }
 message Data {
     string owner = 1;
     string repo = 2;
+}
+message Empty {
 }
 message SubReply{
     string reply = 1;
