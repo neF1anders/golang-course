@@ -8,7 +8,7 @@ type Pinger interface {
 	PingRepo(ctx context.Context, slug Slug) error
 }
 type Retriever interface {
-	List(ctx context.Context) []Slug
+	List(ctx context.Context) ([]Slug, error)
 	Push(ctx context.Context, slug Slug) error
-	Delete(ctx context.Context, slugs []Slug) error
+	Delete(ctx context.Context, slug Slug) error
 }
