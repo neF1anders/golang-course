@@ -11,3 +11,4 @@ logger:
 services:
   subscriber: "subscriber:8082"
   processor: "processor:8083"
+  subscribe: "subscribe:8085"

@@ -7,3 +7,7 @@ type Repo struct {
 	Forks       int    `json:"forks_count"`
 	Date        string `json:"created_at"`
 }
+
+type Repos struct {
+	Repos []Repo `json:"repositories"`
+}

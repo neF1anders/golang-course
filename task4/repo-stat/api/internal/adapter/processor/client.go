@@ -61,6 +61,25 @@ func (c *Client) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, 
 	}, nil
 }
 
+func (c *Client) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
+	data, err := c.pb.GetSubInfo(ctx, &processorpb.Empty{})
+	if err != nil {
+		c.log.Error("processor sub-fetch failed", "error", err)
+		return nil, err
+	}
+	res := make([]domain.Repo, len(data.Subscriptions))
+	for _, el := range data.Subscriptions {
+		res = append(res, domain.Repo{
+			Name:        el.Name,
+			Description: el.Description,
+			Stars:       int(el.Stars),
+			Forks:       int(el.Forks),
+			Date:        el.Date,
+		})
+	}
+	return res, nil
+}
+
 func (c *Client) Close() error {
 	return c.conn.Close()
 }

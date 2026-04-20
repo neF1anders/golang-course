@@ -10,6 +10,7 @@ type Pinger interface {
 }
 type Fetcher interface {
 	GetInfo(ctx context.Context, owner, repo string) (domain.Repo, error)
+	GetSubInfo(ctx context.Context) ([]domain.Repo, error)
 }
 type Retriever interface {
 	Subscribe(ctx context.Context, slug domain.Slug) error

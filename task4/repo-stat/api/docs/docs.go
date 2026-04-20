@@ -90,6 +90,187 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/subscriptions": {
+            "get": {
+                "description": "Returns the list of all subscribed repositories",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Get subscriptions list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Slugs"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Add a new subscription to track a GitHub repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Subscribe to a repository",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "GitHub repo owner",
+                        "name": "owner",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "GitHub repo name",
+                        "name": "repo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request body or missing fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "repository not found on GitHub",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "subscription already exists",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove an existing subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Unsubscribe from a repository",
+                "parameters": [
+                    {
+                        "description": "Repository owner and name",
+                        "name": "slug",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Slug"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request body or missing fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "subscription not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/info": {
+            "get": {
+                "description": "Get subscribed GitHub repositories information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "repositories"
+                ],
+                "summary": "Get subscribed repositories info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Repos"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -127,6 +308,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Repos": {
+            "type": "object",
+            "properties": {
+                "repositories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Repo"
+                    }
+                }
+            }
+        },
         "dto.ServiceStatus": {
             "type": "object",
             "properties": {
@@ -135,6 +327,28 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.Slug": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "type": "string"
+                },
+                "repo": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Slugs": {
+            "type": "object",
+            "properties": {
+                "subscriptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Slug"
+                    }
                 }
             }
         }

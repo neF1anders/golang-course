@@ -37,7 +37,7 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 			http.Error(w, "owner and repo are required", http.StatusBadRequest)
 			return
 		}
-		info, err := fetch.Execute(r.Context(), owner, repo)
+		info, err := fetch.GetInfo(r.Context(), owner, repo)
 		if err != nil {
 			writeGRPCError(w, err)
 			log.Error("failed to execute fetch response", "error", err)
