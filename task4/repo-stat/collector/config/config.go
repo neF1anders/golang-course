@@ -2,7 +2,7 @@ package config
 
 import (
 	"repo-stat/platform/env"
-	"repo-stat/platform/httpserver"
+	"repo-stat/platform/grpcserver"
 	"repo-stat/platform/logger"
 )
 
@@ -12,12 +12,13 @@ type App struct {
 
 type Services struct {
 	Processor string `yaml:"processor" env:"PROCESSOR_ADDRESS" env-default:"processor:8083"`
+	Subscribe string `yaml:"subscribe" env:"SUBSCRIBE_ADDRESS" env-default:"subscribe:8085"`
 }
 
 type Config struct {
 	App      App               `yaml:"app"`
 	Services Services          `yaml:"services"`
-	HTTP     httpserver.Config `yaml:"http"`
+	GRPC     grpcserver.Config `yaml:"grpc"`
 	Logger   logger.Config     `yaml:"logger"`
 }
 

@@ -6,6 +6,9 @@ option go_package = "repo-stat/proto/collector";
 
 service Collector{
     rpc GetInfo(Data) returns (Repo) {}
+    rpc GetSubInfo(Empty) returns (Repos) {}
+}
+message Empty{
 }
 message Data {
     string owner = 1;
@@ -17,4 +20,7 @@ message Repo {
 	int32 Stars = 3;
 	int32 Forks = 4;
 	string Date = 5;
+}
+message Repos{
+    repeated Repo subscriptions = 1;
 }

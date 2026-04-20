@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"repo-stat/collector/internal/entity"
+	entity "repo-stat/collector/internal/domain"
 )
 
 type Client struct {

@@ -9,11 +9,13 @@ import (
 type CollectorServer struct {
 	pb.UnimplementedCollectorServer
 	getRepoInfo *usecase.GetRepoInfoUseCase
+	getSubInfo  *usecase.GetSubInfoUseCase
 }
 
-func NewCollectorServer(getRepoInfo *usecase.GetRepoInfoUseCase) *CollectorServer {
+func NewCollectorServer(getRepoInfo *usecase.GetRepoInfoUseCase, getSubInfo *usecase.GetSubInfoUseCase) *CollectorServer {
 	return &CollectorServer{
 		getRepoInfo: getRepoInfo,
+		getSubInfo:  getSubInfo,
 	}
 }
 
@@ -29,4 +31,22 @@ func (s *CollectorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, 
 		Forks:       int32(repoInfo.Forks),
 		Date:        repoInfo.Date,
 	}, nil
+}
+
+func (s *CollectorServer) GetSubInfo(ctx context.Context, req *pb.Empty) (*pb.Repos, error) {
+	repoInfo, err := s.getSubInfo.Execute(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := &pb.Repos{}
+	for _, el := range repoInfo {
+		res.Subscriptions = append(res.Subscriptions, &pb.Repo{
+			Name:        el.Name,
+			Description: el.Description,
+			Stars:       int32(el.Stars),
+			Forks:       int32(el.Forks),
+			Date:        el.Date,
+		})
+	}
+	return res, nil
 }

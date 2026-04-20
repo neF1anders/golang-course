@@ -1,4 +1,4 @@
-package entity
+package domain
 
 type Repo struct {
 	Name        string
@@ -6,4 +6,9 @@ type Repo struct {
 	Stars       int
 	Forks       int
 	Date        string
+}
+
+type Slug struct {
+	Owner string
+	Repo  string
 }

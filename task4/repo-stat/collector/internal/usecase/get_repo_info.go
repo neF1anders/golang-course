@@ -1,19 +1,16 @@
 package usecase
 
 import (
-	"repo-stat/collector/internal/entity"
+	domain "repo-stat/collector/internal/domain"
 )
 
-type GitHubRepoFetcher interface {
-	Fetch(owner, repo string) (*entity.Repo, error)
-}
 type GetRepoInfoUseCase struct {
-	fetcher GitHubRepoFetcher
+	fetcher domain.Fetcher
 }
 
-func NewGetRepoInfoUseCase(fetcher GitHubRepoFetcher) *GetRepoInfoUseCase {
+func NewGetRepoInfoUseCase(fetcher domain.Fetcher) *GetRepoInfoUseCase {
 	return &GetRepoInfoUseCase{fetcher: fetcher}
 }
-func (uc *GetRepoInfoUseCase) Execute(owner, repo string) (*entity.Repo, error) {
+func (uc *GetRepoInfoUseCase) Execute(owner, repo string) (*domain.Repo, error) {
 	return uc.fetcher.Fetch(owner, repo)
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v3.21.12
-// source: proto/collector/collector.proto
+// source: collector.proto
 
 package collector
 
@@ -21,6 +21,42 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Empty struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	mi := &file_collector_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_collector_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_collector_proto_rawDescGZIP(), []int{0}
+}
+
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Owner         string                 `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
@@ -31,7 +67,7 @@ type Data struct {
 
 func (x *Data) Reset() {
 	*x = Data{}
-	mi := &file_proto_collector_collector_proto_msgTypes[0]
+	mi := &file_collector_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +79,7 @@ func (x *Data) String() string {
 func (*Data) ProtoMessage() {}
 
 func (x *Data) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_collector_collector_proto_msgTypes[0]
+	mi := &file_collector_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +92,7 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Data.ProtoReflect.Descriptor instead.
 func (*Data) Descriptor() ([]byte, []int) {
-	return file_proto_collector_collector_proto_rawDescGZIP(), []int{0}
+	return file_collector_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Data) GetOwner() string {
@@ -86,7 +122,7 @@ type Repo struct {
 
 func (x *Repo) Reset() {
 	*x = Repo{}
-	mi := &file_proto_collector_collector_proto_msgTypes[1]
+	mi := &file_collector_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -98,7 +134,7 @@ func (x *Repo) String() string {
 func (*Repo) ProtoMessage() {}
 
 func (x *Repo) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_collector_collector_proto_msgTypes[1]
+	mi := &file_collector_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +147,7 @@ func (x *Repo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Repo.ProtoReflect.Descriptor instead.
 func (*Repo) Descriptor() ([]byte, []int) {
-	return file_proto_collector_collector_proto_rawDescGZIP(), []int{1}
+	return file_collector_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Repo) GetName() string {
@@ -149,11 +185,56 @@ func (x *Repo) GetDate() string {
 	return ""
 }
 
-var File_proto_collector_collector_proto protoreflect.FileDescriptor
+type Repos struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Subscriptions []*Repo                `protobuf:"bytes,1,rep,name=subscriptions,proto3" json:"subscriptions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_proto_collector_collector_proto_rawDesc = "" +
+func (x *Repos) Reset() {
+	*x = Repos{}
+	mi := &file_collector_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Repos) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Repos) ProtoMessage() {}
+
+func (x *Repos) ProtoReflect() protoreflect.Message {
+	mi := &file_collector_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Repos.ProtoReflect.Descriptor instead.
+func (*Repos) Descriptor() ([]byte, []int) {
+	return file_collector_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Repos) GetSubscriptions() []*Repo {
+	if x != nil {
+		return x.Subscriptions
+	}
+	return nil
+}
+
+var File_collector_proto protoreflect.FileDescriptor
+
+const file_collector_proto_rawDesc = "" +
 	"\n" +
-	"\x1fproto/collector/collector.proto\x12\fcollector.v1\"0\n" +
+	"\x0fcollector.proto\x12\fcollector.v1\"\a\n" +
+	"\x05Empty\"0\n" +
 	"\x04Data\x12\x14\n" +
 	"\x05owner\x18\x01 \x01(\tR\x05owner\x12\x12\n" +
 	"\x04repo\x18\x02 \x01(\tR\x04repo\"|\n" +
@@ -162,57 +243,66 @@ const file_proto_collector_collector_proto_rawDesc = "" +
 	"\vDescription\x18\x02 \x01(\tR\vDescription\x12\x14\n" +
 	"\x05Stars\x18\x03 \x01(\x05R\x05Stars\x12\x14\n" +
 	"\x05Forks\x18\x04 \x01(\x05R\x05Forks\x12\x12\n" +
-	"\x04Date\x18\x05 \x01(\tR\x04Date2@\n" +
+	"\x04Date\x18\x05 \x01(\tR\x04Date\"A\n" +
+	"\x05Repos\x128\n" +
+	"\rsubscriptions\x18\x01 \x03(\v2\x12.collector.v1.RepoR\rsubscriptions2z\n" +
 	"\tCollector\x123\n" +
-	"\aGetInfo\x12\x12.collector.v1.Data\x1a\x12.collector.v1.Repo\"\x00B\x1bZ\x19repo-stat/proto/collectorb\x06proto3"
+	"\aGetInfo\x12\x12.collector.v1.Data\x1a\x12.collector.v1.Repo\"\x00\x128\n" +
+	"\n" +
+	"GetSubInfo\x12\x13.collector.v1.Empty\x1a\x13.collector.v1.Repos\"\x00B\x1bZ\x19repo-stat/proto/collectorb\x06proto3"
 
 var (
-	file_proto_collector_collector_proto_rawDescOnce sync.Once
-	file_proto_collector_collector_proto_rawDescData []byte
+	file_collector_proto_rawDescOnce sync.Once
+	file_collector_proto_rawDescData []byte
 )
 
-func file_proto_collector_collector_proto_rawDescGZIP() []byte {
-	file_proto_collector_collector_proto_rawDescOnce.Do(func() {
-		file_proto_collector_collector_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_collector_collector_proto_rawDesc), len(file_proto_collector_collector_proto_rawDesc)))
+func file_collector_proto_rawDescGZIP() []byte {
+	file_collector_proto_rawDescOnce.Do(func() {
+		file_collector_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_collector_proto_rawDesc), len(file_collector_proto_rawDesc)))
 	})
-	return file_proto_collector_collector_proto_rawDescData
+	return file_collector_proto_rawDescData
 }
 
-var file_proto_collector_collector_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_proto_collector_collector_proto_goTypes = []any{
-	(*Data)(nil), // 0: collector.v1.Data
-	(*Repo)(nil), // 1: collector.v1.Repo
+var file_collector_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_collector_proto_goTypes = []any{
+	(*Empty)(nil), // 0: collector.v1.Empty
+	(*Data)(nil),  // 1: collector.v1.Data
+	(*Repo)(nil),  // 2: collector.v1.Repo
+	(*Repos)(nil), // 3: collector.v1.Repos
 }
-var file_proto_collector_collector_proto_depIdxs = []int32{
-	0, // 0: collector.v1.Collector.GetInfo:input_type -> collector.v1.Data
-	1, // 1: collector.v1.Collector.GetInfo:output_type -> collector.v1.Repo
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+var file_collector_proto_depIdxs = []int32{
+	2, // 0: collector.v1.Repos.subscriptions:type_name -> collector.v1.Repo
+	1, // 1: collector.v1.Collector.GetInfo:input_type -> collector.v1.Data
+	0, // 2: collector.v1.Collector.GetSubInfo:input_type -> collector.v1.Empty
+	2, // 3: collector.v1.Collector.GetInfo:output_type -> collector.v1.Repo
+	3, // 4: collector.v1.Collector.GetSubInfo:output_type -> collector.v1.Repos
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_proto_collector_collector_proto_init() }
-func file_proto_collector_collector_proto_init() {
-	if File_proto_collector_collector_proto != nil {
+func init() { file_collector_proto_init() }
+func file_collector_proto_init() {
+	if File_collector_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_collector_collector_proto_rawDesc), len(file_proto_collector_collector_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_collector_proto_rawDesc), len(file_collector_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_collector_collector_proto_goTypes,
-		DependencyIndexes: file_proto_collector_collector_proto_depIdxs,
-		MessageInfos:      file_proto_collector_collector_proto_msgTypes,
+		GoTypes:           file_collector_proto_goTypes,
+		DependencyIndexes: file_collector_proto_depIdxs,
+		MessageInfos:      file_collector_proto_msgTypes,
 	}.Build()
-	File_proto_collector_collector_proto = out.File
-	file_proto_collector_collector_proto_goTypes = nil
-	file_proto_collector_collector_proto_depIdxs = nil
+	File_collector_proto = out.File
+	file_collector_proto_goTypes = nil
+	file_collector_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v3.21.12
-// source: proto/collector/collector.proto
+// source: collector.proto
 
 package collector
 
@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Collector_GetInfo_FullMethodName = "/collector.v1.Collector/GetInfo"
+	Collector_GetInfo_FullMethodName    = "/collector.v1.Collector/GetInfo"
+	Collector_GetSubInfo_FullMethodName = "/collector.v1.Collector/GetSubInfo"
 )
 
 // CollectorClient is the client API for Collector service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollectorClient interface {
 	GetInfo(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Repo, error)
+	GetSubInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Repos, error)
 }
 
 type collectorClient struct {
@@ -47,11 +49,22 @@ func (c *collectorClient) GetInfo(ctx context.Context, in *Data, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *collectorClient) GetSubInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Repos, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Repos)
+	err := c.cc.Invoke(ctx, Collector_GetSubInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CollectorServer is the server API for Collector service.
 // All implementations must embed UnimplementedCollectorServer
 // for forward compatibility.
 type CollectorServer interface {
 	GetInfo(context.Context, *Data) (*Repo, error)
+	GetSubInfo(context.Context, *Empty) (*Repos, error)
 	mustEmbedUnimplementedCollectorServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedCollectorServer struct{}
 
 func (UnimplementedCollectorServer) GetInfo(context.Context, *Data) (*Repo, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetInfo not implemented")
+}
+func (UnimplementedCollectorServer) GetSubInfo(context.Context, *Empty) (*Repos, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSubInfo not implemented")
 }
 func (UnimplementedCollectorServer) mustEmbedUnimplementedCollectorServer() {}
 func (UnimplementedCollectorServer) testEmbeddedByValue()                   {}
@@ -104,6 +120,24 @@ func _Collector_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Collector_GetSubInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectorServer).GetSubInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Collector_GetSubInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectorServer).GetSubInfo(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Collector_ServiceDesc is the grpc.ServiceDesc for Collector service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -115,7 +149,11 @@ var Collector_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetInfo",
 			Handler:    _Collector_GetInfo_Handler,
 		},
+		{
+			MethodName: "GetSubInfo",
+			Handler:    _Collector_GetSubInfo_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/collector/collector.proto",
+	Metadata: "collector.proto",
 }

@@ -25,4 +25,4 @@ FROM scratch
 COPY --from=build /collector /collector
 COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-ENTRYPOINT ["/collector"] 
+ENTRYPOINT ["/collector", "-config", "/config.yaml"]
