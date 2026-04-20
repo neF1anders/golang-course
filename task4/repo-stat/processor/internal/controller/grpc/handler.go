@@ -24,17 +24,36 @@ func NewProcessorServer(log *slog.Logger, fetch *usecase.Fetch, ping *usecase.Pi
 
 func (s *ProcessorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, error) {
 	s.log.Debug("processor fetch request received")
-	repoInfo, err := s.fetch.Execute(ctx, req.Owner, req.Repo)
+	repoInfo, err := s.fetch.GetInfo(ctx, req.Owner, req.Repo)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Repo{ //??????
+	return &pb.Repo{
 		Name:        repoInfo.Name,
 		Description: repoInfo.Description,
 		Stars:       int32(repoInfo.Stars),
 		Forks:       int32(repoInfo.Forks),
 		Date:        repoInfo.Date,
 	}, nil
+}
+
+func (s *ProcessorServer) GetSubInfo(ctx context.Context, req *pb.Empty) (*pb.Repos, error) {
+	s.log.Debug("processor sub-fetch request received")
+	repoInfo, err := s.fetch.GetSubInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := &pb.Repos{}
+	for _, el := range repoInfo {
+		res.Subscriptions = append(res.Subscriptions, &pb.Repo{
+			Name:        el.Name,
+			Description: el.Description,
+			Stars:       int32(el.Stars),
+			Forks:       int32(el.Forks),
+			Date:        el.Date,
+		})
+	}
+	return res, nil
 }
 
 func (s *ProcessorServer) Ping(ctx context.Context, _ *pb.PingRequest) (*pb.PingResponse, error) {

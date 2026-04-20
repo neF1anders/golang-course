@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v3.21.12
-// source: proto/processor/processor.proto
+// source: processor.proto
 
 package processor
 
@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Processor_GetInfo_FullMethodName = "/processor.v1.Processor/GetInfo"
-	Processor_Ping_FullMethodName    = "/processor.v1.Processor/Ping"
+	Processor_GetInfo_FullMethodName    = "/processor.v1.Processor/GetInfo"
+	Processor_GetSubInfo_FullMethodName = "/processor.v1.Processor/GetSubInfo"
+	Processor_Ping_FullMethodName       = "/processor.v1.Processor/Ping"
 )
 
 // ProcessorClient is the client API for Processor service.
@@ -28,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProcessorClient interface {
 	GetInfo(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Repo, error)
+	GetSubInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Repos, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 }
 
@@ -49,6 +51,16 @@ func (c *processorClient) GetInfo(ctx context.Context, in *Data, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *processorClient) GetSubInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Repos, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Repos)
+	err := c.cc.Invoke(ctx, Processor_GetSubInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *processorClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PingResponse)
@@ -64,6 +76,7 @@ func (c *processorClient) Ping(ctx context.Context, in *PingRequest, opts ...grp
 // for forward compatibility.
 type ProcessorServer interface {
 	GetInfo(context.Context, *Data) (*Repo, error)
+	GetSubInfo(context.Context, *Empty) (*Repos, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	mustEmbedUnimplementedProcessorServer()
 }
@@ -77,6 +90,9 @@ type UnimplementedProcessorServer struct{}
 
 func (UnimplementedProcessorServer) GetInfo(context.Context, *Data) (*Repo, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetInfo not implemented")
+}
+func (UnimplementedProcessorServer) GetSubInfo(context.Context, *Empty) (*Repos, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSubInfo not implemented")
 }
 func (UnimplementedProcessorServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Ping not implemented")
@@ -120,6 +136,24 @@ func _Processor_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Processor_GetSubInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessorServer).GetSubInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Processor_GetSubInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessorServer).GetSubInfo(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Processor_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PingRequest)
 	if err := dec(in); err != nil {
@@ -150,10 +184,14 @@ var Processor_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Processor_GetInfo_Handler,
 		},
 		{
+			MethodName: "GetSubInfo",
+			Handler:    _Processor_GetSubInfo_Handler,
+		},
+		{
 			MethodName: "Ping",
 			Handler:    _Processor_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/processor/processor.proto",
+	Metadata: "processor.proto",
 }

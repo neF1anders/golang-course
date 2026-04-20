@@ -6,6 +6,7 @@ option go_package = "repo-stat/proto/processor";
 
 service Processor{
     rpc GetInfo(Data) returns (Repo);
+    rpc GetSubInfo(Empty) returns (Repos) {};
     rpc Ping(PingRequest) returns (PingResponse);
 }
 message Data {
@@ -23,4 +24,9 @@ message PingRequest {
 }
 message PingResponse {
   string reply = 1;
+}
+message Empty{
+}
+message Repos{
+    repeated Repo subscriptions = 1;
 }

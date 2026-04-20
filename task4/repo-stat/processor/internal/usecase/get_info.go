@@ -5,7 +5,7 @@ import (
 	"repo-stat/processor/internal/domain"
 )
 
-type Fetch struct { //Fetcher in ports CORRECT???
+type Fetch struct {
 	fetcher Fetcher
 }
 
@@ -15,6 +15,10 @@ func NewFetch(fetcher Fetcher) *Fetch {
 	}
 }
 
-func (f *Fetch) Execute(ctx context.Context, owner, repo string) (domain.Repo, error) {
+func (f *Fetch) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, error) {
 	return f.fetcher.GetInfo(ctx, owner, repo)
+}
+
+func (f *Fetch) GetSubInfo(ctx context.Context) ([]*domain.Repo, error) {
+	return f.fetcher.GetSubInfo(ctx)
 }
