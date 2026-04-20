@@ -194,13 +194,18 @@ const docTemplate = `{
                 "summary": "Unsubscribe from a repository",
                 "parameters": [
                     {
-                        "description": "Repository owner and name",
-                        "name": "slug",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.Slug"
-                        }
+                        "type": "string",
+                        "description": "GitHub repo owner",
+                        "name": "owner",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "GitHub repo name",
+                        "name": "repo",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {

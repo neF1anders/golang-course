@@ -76,3 +76,45 @@ services:
       - LISTEN_ADDRESS=:8084
       - API_ADDRESS=api:8081
       - PROCESSOR_ADDRESS=processor:8083
+
+
+  subscribe:
+    image: subscribe:latest
+    build:
+      context: repo-stat
+      dockerfile: Dockerfile.subscribe
+    container_name: subscribe
+    restart: unless-stopped
+    ports:
+      - 28085:8085
+    volumes:
+      - ./repo-stat/subscribe/config/config.yaml:/config.yaml
+    environment:
+      - LISTEN_ADDRESS=:8085
+      - API_ADDRESS=api:8081
+      - COLLECTOR_ADDRESS=collector:8084
+    depends_on:
+      - collector
+      - api
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: subscriptions
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d subscriptions"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

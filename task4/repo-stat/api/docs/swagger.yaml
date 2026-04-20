@@ -112,12 +112,16 @@ paths:
       - application/json
       description: Remove an existing subscription
       parameters:
-      - description: Repository owner and name
-        in: body
-        name: slug
+      - description: GitHub repo owner
+        in: query
+        name: owner
         required: true
-        schema:
-          $ref: '#/definitions/dto.Slug'
+        type: string
+      - description: GitHub repo name
+        in: query
+        name: repo
+        required: true
+        type: string
       produces:
       - application/json
       responses:

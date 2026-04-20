@@ -22,12 +22,12 @@ func NewClient(log *slog.Logger) *Client {
 	}
 }
 
-func (c *Client) PingRepo(ctx context.Context, slug domain.Slug) (int, error) {
+func (c *Client) PingRepo(ctx context.Context, slug domain.Slug) error {
 	url := fmt.Sprintf("https://github.com/%s/%s", slug.Owner, slug.Repo)
 	resp, err := c.conn.Head(url)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	defer resp.Body.Close()
-	return resp.StatusCode, nil
+	return nil
 }
