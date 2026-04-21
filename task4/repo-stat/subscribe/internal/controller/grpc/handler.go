@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	pb "repo-stat/proto/subscribe"
 	"repo-stat/subscribe/internal/domain"
@@ -26,16 +27,18 @@ func NewSubscribeServer(log *slog.Logger, db *usecase.DBUseCase, ping *usecase.P
 func (s *SubscribeServer) Subinfo(ctx context.Context, empty *pb.Empty) (*pb.InfoReply, error) {
 	s.log.Debug("subscribe info request received")
 	info, err := s.db.List(ctx)
+	s.log.Debug(fmt.Sprintf("temp comment - len info in Subinfo = %v", len(info)))
 	if err != nil {
 		return nil, err
 	}
-	data := make([]*pb.Data, len(info))
+	data := make([]*pb.Data, 0, len(info))
 	for _, el := range info {
 		data = append(data, &pb.Data{
 			Owner: el.Owner,
-			Repo:  el.Owner,
+			Repo:  el.Repo,
 		})
 	}
+	defer s.log.Debug(fmt.Sprintf("temp comment - len data in Subinfo = %v", len(data)))
 	return &pb.InfoReply{
 		Subscriptions: data,
 	}, nil

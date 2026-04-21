@@ -42,6 +42,10 @@ func writeGRPCError(w http.ResponseWriter, err error) {
 			http.Error(w, "rate limit exceeded", http.StatusServiceUnavailable)
 			return
 		}
+		if strings.Contains(msg, "409") {
+			http.Error(w, "subscription already exists", http.StatusConflict)
+			return
+		}
 		http.Error(w, msg, http.StatusInternalServerError)
 
 	default:

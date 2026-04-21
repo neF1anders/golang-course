@@ -49,7 +49,7 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("create PostgreSQL client: %w", err)
 	}
-	db := usecase.NewDBUseCase(pgclient)
+	db := usecase.NewDBUseCase(pgclient, pingUseCase)
 
 	server := grpccontroller.NewSubscribeServer(log, db, pingUseCase)
 

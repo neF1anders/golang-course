@@ -39,7 +39,7 @@ func (c *Client) Subinfo(ctx context.Context) ([]*domain.Slug, error) {
 		c.log.Error("subscribe info failed", "error", err)
 		return nil, err
 	}
-	data_to_return := make([]*domain.Slug, len(data.Subscriptions))
+	data_to_return := make([]*domain.Slug, 0, len(data.Subscriptions))
 	for _, el := range data.Subscriptions {
 		data_to_return = append(data_to_return, &domain.Slug{
 			Owner: el.Owner,

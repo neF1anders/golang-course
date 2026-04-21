@@ -29,5 +29,8 @@ func (c *Client) PingRepo(ctx context.Context, slug domain.Slug) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("repository not found or unavailable: status %d", resp.StatusCode)
+	}
 	return nil
 }

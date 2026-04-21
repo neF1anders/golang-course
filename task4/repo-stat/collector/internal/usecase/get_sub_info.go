@@ -18,11 +18,11 @@ func (uc *GetSubInfoUseCase) Execute(ctx context.Context) ([]*domain.Repo, error
 	if err != nil {
 		return nil, err
 	}
-	res := make([]*domain.Repo, len(slugs))
-	for i := 0; i < len(slugs); i++ {
-		repo, err := uc.fetcher.Fetch(slugs[i].Owner, slugs[i].Repo)
+	res := make([]*domain.Repo, 0, len(slugs))
+	for _, el := range slugs {
+		repo, err := uc.fetcher.Fetch(el.Owner, el.Repo)
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		res = append(res, repo)
 	}

@@ -67,7 +67,7 @@ func (c *Client) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
 		c.log.Error("processor sub-fetch failed", "error", err)
 		return nil, err
 	}
-	res := make([]domain.Repo, len(data.Subscriptions))
+	res := make([]domain.Repo, 0, len(data.Subscriptions))
 	for _, el := range data.Subscriptions {
 		res = append(res, domain.Repo{
 			Name:        el.Name,
