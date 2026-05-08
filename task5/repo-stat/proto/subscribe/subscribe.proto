@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package subscribe.v1;
+
+option go_package = "repo-stat/proto/subscribe"; 
+
+service Subscribe{
+    rpc Subscribe(Data) returns (SubReply) {}
+    rpc Unsubscribe(Data) returns (SubReply) {}
+    rpc Subinfo(Empty) returns (InfoReply) {}
+}
+message Data {
+    string owner = 1;
+    string repo = 2;
+}
+message Empty {
+}
+message SubReply{
+    string reply = 1;
+}
+message InfoReply{
+    repeated Data subscriptions = 1;
+}
