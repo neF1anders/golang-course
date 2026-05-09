@@ -5,7 +5,7 @@ import (
 	"repo-stat/processor/internal/domain"
 )
 
-type Fetch struct { //Fetcher in ports CORRECT???
+type Fetch struct {
 	fetcher Fetcher
 }
 

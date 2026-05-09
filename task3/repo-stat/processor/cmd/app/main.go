@@ -32,7 +32,7 @@ func run(ctx context.Context) error {
 	}
 
 	pingUseCase := usecase.NewPing()
-	fetchUseCase := usecase.NewFetch(CollectorClient) //??
+	fetchUseCase := usecase.NewFetch(CollectorClient)
 
 	processorHandler := grpccontroller.NewProcessorServer(log, fetchUseCase, pingUseCase)
 

@@ -12,7 +12,7 @@ import (
 	pb "repo-stat/proto/collector"
 )
 
-func main() { //config unused - i want to, but have some difficulties
+func main() {
 	githubClient := github.NewClient()
 	getRepoInfo := usecase.NewGetRepoInfoUseCase(githubClient)
 	server := grpc.NewServer()

@@ -28,7 +28,7 @@ func (s *ProcessorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, 
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Repo{ //??????
+	return &pb.Repo{
 		Name:        repoInfo.Name,
 		Description: repoInfo.Description,
 		Stars:       int32(repoInfo.Stars),

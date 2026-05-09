@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -33,8 +34,9 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 			return
 		}
 		owner, repo, err := ParseGitHubRepo(repoURL)
-		if owner == "" || repo == "" {
+		if owner == "" || repo == "" || err != nil {
 			http.Error(w, "owner and repo are required", http.StatusBadRequest)
+			fmt.Printf("Error in parsing url: %v\n", err)
 			return
 		}
 		info, err := fetch.Execute(r.Context(), owner, repo)

@@ -32,7 +32,7 @@ func NewPingHandler(log *slog.Logger, ping *usecase.Ping) http.HandlerFunc {
 				Status: string(subscriber_status),
 			},
 		}
-		var status string = "degraded"
+		var status = "degraded"
 		if subscriber_status == processor_status &&
 			processor_status == domain.PingStatusUp {
 			status = "ok"
