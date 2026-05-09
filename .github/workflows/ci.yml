@@ -40,17 +40,21 @@ jobs:
 
       - name: Install tools
         run: make -C repo-stat tools
+        working-directory: ${{ steps.extract.outputs.task }}
 
       - name: Check protobuf generation
         run: |
           make proto
           git diff --exit-code
+        working-directory: ${{ steps.extract.outputs.task }}
 
       - name: Lint
         run: make lint
+        working-directory: ${{ steps.extract.outputs.task }}
 
       - name: Unit
         run: make unit
+        working-directory: ${{ steps.extract.outputs.task }}
 
   integration:
     runs-on: ubuntu-latest
