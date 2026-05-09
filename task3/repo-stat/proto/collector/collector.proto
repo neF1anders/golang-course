@@ -5,16 +5,16 @@ package collector.v1;
 option go_package = "repo-stat/proto/collector"; 
 
 service Collector{
-    rpc GetInfo(Data) returns (Repo) {}
+  rpc GetInfo(Data) returns (Repo) {}
 }
 message Data {
-    string owner = 1;
-    string repo = 2;
+  string owner = 1;
+  string repo = 2;
 }
 message Repo {
-    string Name = 1;
-	string Description = 2;
-	int32 Stars = 3;
-	int32 Forks = 4;
-	string Date = 5;
+  string name = 1;
+  string description = 2;
+  int32 stars = 3;
+  int32 forks = 4;
+  string date = 5;
 }

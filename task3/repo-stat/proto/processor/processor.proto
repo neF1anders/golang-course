@@ -5,19 +5,19 @@ package processor.v1;
 option go_package = "repo-stat/proto/processor";
 
 service Processor{
-    rpc GetInfo(Data) returns (Repo);
-    rpc Ping(PingRequest) returns (PingResponse);
+  rpc GetInfo(Data) returns (Repo);
+  rpc Ping(PingRequest) returns (PingResponse);
 }
 message Data {
-    string owner = 1;
-    string repo = 2;
+  string owner = 1;
+  string repo = 2;
 }
 message Repo {
-    string name = 1;
-	string description = 2;
-	int32 stars = 3;
-	int32 forks = 4;
-	string date = 5;
+  string name = 1;
+  string description = 2;
+  int32 stars = 3;
+  int32 forks = 4;
+  string date = 5;
 }
 message PingRequest {
 }
