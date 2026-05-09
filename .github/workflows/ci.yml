@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+
 jobs:
   lint-and-unit:
     runs-on: ubuntu-latest
@@ -19,11 +20,22 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Extract task number from branch name
+        id: extract
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          TASK=$(echo "$BRANCH" | grep -oE 'task[0-9]+' || echo "")
+          if [ -z "$TASK" ]; then
+            echo "Branch name does not contain taskX pattern"
+            exit 1
+          fi
+          echo "task=$TASK" >> $GITHUB_OUTPUT
+
       - uses: actions/setup-go@v5
         with:
-          go-version-file: task3/repo-stat/go.mod
+          go-version-file: ${{ steps.extract.outputs.task }}/repo-stat/go.mod
           cache: true
-          cache-dependency-path: task3/repo-stat/go.sum
+          cache-dependency-path: ${{ steps.extract.outputs.task }}/repo-stat/go.sum
 
       - name: Install protoc
         run: |
@@ -49,7 +61,7 @@ jobs:
     needs: lint-and-unit
     defaults:
       run:
-        working-directory: task3
+        working-directory: ${{ steps.extract.outputs.task }}
     steps:
       - uses: actions/checkout@v5
 
