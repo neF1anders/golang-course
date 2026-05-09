@@ -65,7 +65,12 @@ func (r *PostgresClient) Delete(ctx context.Context, slug domain.Slug) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin a transaction: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		err := tx.Rollback(ctx)
+		if err != nil {
+			fmt.Printf("failed to begin a transaction: %v", err)
+		}
+	}()
 
 	qtx := r.q.WithTx(tx)
 

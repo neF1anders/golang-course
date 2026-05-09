@@ -36,7 +36,12 @@ func NewSubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase) 
 			Owner: owner,
 			Repo:  repo,
 		}
-		defer r.Body.Close()
+		defer func() {
+			err := r.Body.Close()
+			if err != nil {
+				log.Printf("Error during closing responce body in fetcher: %v", err)
+			}
+		}()
 		err := retriever.Subscribe(r.Context(), domain.Slug{
 			Owner: req.Owner,
 			Repo:  req.Repo,
@@ -48,10 +53,13 @@ func NewSubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase) 
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(map[string]string{
+		err = json.NewEncoder(w).Encode(map[string]string{
 			"status": "subscribed",
 			"owner":  req.Owner,
 			"repo":   req.Repo,
 		})
+		if err != nil {
+			log.Error("failed to encode a response", "error", err)
+		}
 	}
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v3.21.12
-// source: repo-stat/proto/subscribe/subscribe.proto
+// source: proto/subscribe/subscribe.proto
 
 package subscribe
 
@@ -193,5 +193,5 @@ var Subscribe_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "repo-stat/proto/subscribe/subscribe.proto",
+	Metadata: "proto/subscribe/subscribe.proto",
 }

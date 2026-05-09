@@ -38,7 +38,7 @@ func (uc *DBUseCase) Delete(ctx context.Context, slug domain.Slug) error {
 	if err != nil {
 		return fmt.Errorf("failed to list subs: %v", err)
 	}
-	var flag bool = false
+	var flag = false
 	for _, el := range slugs {
 		if el.Owner == slug.Owner && el.Repo == slug.Repo {
 			flag = true

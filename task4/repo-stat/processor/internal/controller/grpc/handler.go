@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"repo-stat/processor/internal/usecase"
 	pb "repo-stat/proto/processor"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ProcessorServer struct {
@@ -33,7 +35,7 @@ func (s *ProcessorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, 
 		Description: repoInfo.Description,
 		Stars:       int32(repoInfo.Stars),
 		Forks:       int32(repoInfo.Forks),
-		Date:        repoInfo.Date,
+		Date:        timestamppb.New(repoInfo.Date),
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (s *ProcessorServer) GetSubInfo(ctx context.Context, req *pb.Empty) (*pb.Re
 			Description: el.Description,
 			Stars:       int32(el.Stars),
 			Forks:       int32(el.Forks),
-			Date:        el.Date,
+			Date:        timestamppb.New(el.Date),
 		})
 	}
 	return res, nil

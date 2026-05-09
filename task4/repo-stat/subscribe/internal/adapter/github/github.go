@@ -3,6 +3,7 @@ package adapter
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -28,7 +29,12 @@ func (c *Client) PingRepo(ctx context.Context, slug domain.Slug) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Printf("Error during closing responce body in fetcher: %v", err)
+		}
+	}()
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("repository not found or unavailable: status %d", resp.StatusCode)
 	}

@@ -34,7 +34,12 @@ func NewUnsubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase
 			Owner: owner,
 			Repo:  repo,
 		}
-		defer r.Body.Close()
+		defer func() {
+			err := r.Body.Close()
+			if err != nil {
+				log.Printf("Error during closing responce body in fetcher: %v", err)
+			}
+		}()
 		err := retriever.Unsubscribe(r.Context(), domain.Slug{
 			Owner: req.Owner,
 			Repo:  req.Repo,
@@ -46,10 +51,13 @@ func NewUnsubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]string{
+		err = json.NewEncoder(w).Encode(map[string]string{
 			"status": "unsubscribed",
 			"owner":  req.Owner,
 			"repo":   req.Repo,
 		})
+		if err != nil {
+			log.Error("failed to encode a response", "error", err)
+		}
 	}
 }
