@@ -7,7 +7,7 @@ services:
     container_name: api
     restart: unless-stopped
     ports:
-      - 28081:8081
+      - 28080:8081
     volumes:
       - ./repo-stat/api/config/config.yaml:/config.yaml
     environment:

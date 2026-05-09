@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -29,12 +30,23 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 	return func(w http.ResponseWriter, r *http.Request) {
 		repoURL := r.URL.Query().Get("url")
 		if repoURL == "" {
-			http.Error(w, "missing url parameter", http.StatusBadRequest)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			err := json.NewEncoder(w).Encode(map[string]string{"error": "missing url parameter"})
+			if err != nil {
+				log.Error("failed to encode error json", "error", err)
+			}
 			return
 		}
 		owner, repo, err := ParseGitHubRepo(repoURL)
-		if owner == "" || repo == "" {
-			http.Error(w, "owner and repo are required", http.StatusBadRequest)
+		if owner == "" || repo == "" || err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			err := json.NewEncoder(w).Encode(map[string]string{"error": "invalid url parameters"})
+			if err != nil {
+				log.Error("failed to encode error json", "error", err)
+			}
+			fmt.Printf("Error in parsing url: %v\n", err)
 			return
 		}
 		info, err := fetch.GetInfo(r.Context(), owner, repo)
