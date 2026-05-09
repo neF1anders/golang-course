@@ -11,12 +11,6 @@ permissions:
 jobs:
   lint-and-unit:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        task: [task3, task4]
-    defaults:
-      run:
-        working-directory: ${{ matrix.task }}
     steps:
       - uses: actions/checkout@v5
 
