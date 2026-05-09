@@ -4,6 +4,8 @@ import (
 	"context"
 	"repo-stat/collector/internal/usecase"
 	pb "repo-stat/proto/collector"
+
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type CollectorServer struct {
@@ -27,6 +29,6 @@ func (s *CollectorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, 
 		Description: repoInfo.Description,
 		Stars:       int32(repoInfo.Stars),
 		Forks:       int32(repoInfo.Forks),
-		Date:        repoInfo.Date,
+		Date:        timestamppb.New(repoInfo.Date),
 	}, nil
 }

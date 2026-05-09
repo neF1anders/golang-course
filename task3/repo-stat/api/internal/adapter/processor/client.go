@@ -57,7 +57,7 @@ func (c *Client) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, 
 		Description: data.Description,
 		Stars:       int(data.Stars),
 		Forks:       int(data.Forks),
-		Date:        data.Date,
+		Date:        data.Date.AsTime(),
 	}, nil
 }
 

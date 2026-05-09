@@ -30,12 +30,16 @@ func NewGetInfoHandler(log *slog.Logger, fetch *usecase.Fetch) http.HandlerFunc 
 	return func(w http.ResponseWriter, r *http.Request) {
 		repoURL := r.URL.Query().Get("url")
 		if repoURL == "" {
-			http.Error(w, "missing url parameter", http.StatusBadRequest)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "missing url parameter"})
 			return
 		}
 		owner, repo, err := ParseGitHubRepo(repoURL)
 		if owner == "" || repo == "" || err != nil {
-			http.Error(w, "owner and repo are required", http.StatusBadRequest)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "invalid url parameters"})
 			fmt.Printf("Error in parsing url: %v\n", err)
 			return
 		}

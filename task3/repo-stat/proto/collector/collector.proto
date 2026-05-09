@@ -4,6 +4,8 @@ package collector.v1;
 
 option go_package = "repo-stat/proto/collector"; 
 
+import "google/protobuf/timestamp.proto";
+
 service Collector{
   rpc GetInfo(Data) returns (Repo) {}
 }
@@ -16,5 +18,5 @@ message Repo {
   string description = 2;
   int32 stars = 3;
   int32 forks = 4;
-  string date = 5;
+  google.protobuf.Timestamp date = 5;
 }

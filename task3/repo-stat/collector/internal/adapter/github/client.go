@@ -22,7 +22,7 @@ func NewClient() *Client {
 }
 
 type githubResponse struct {
-	Name        string    `json:"name"`
+	Name        string    `json:"full_name"`
 	Description string    `json:"description"`
 	Stars       int       `json:"stargazers_count"`
 	Forks       int       `json:"forks_count"`
@@ -64,6 +64,6 @@ func (c *Client) Fetch(owner, repo string) (*entity.Repo, error) {
 		Description: response.Description,
 		Stars:       response.Stars,
 		Forks:       response.Forks,
-		Date:        response.CreatedAt.Format("2006-01-02 15:04:05"),
+		Date:        response.CreatedAt,
 	}, nil
 }
