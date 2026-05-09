@@ -39,7 +39,7 @@ func NewSubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase) 
 		defer func() {
 			err := r.Body.Close()
 			if err != nil {
-				log.Printf("Error during closing responce body in fetcher: %v", err)
+				log.Error("Error during closing responce body in fetcher", "error", err)
 			}
 		}()
 		err := retriever.Subscribe(r.Context(), domain.Slug{
