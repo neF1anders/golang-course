@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package collector.v1;
 
-option go_package = "repo-stat/proto/collector"; 
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "repo-stat/proto/collector"; 
 
 service Collector{
   rpc GetInfo(Data) returns (Repo) {}

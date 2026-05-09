@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package processor.v1;
 
-option go_package = "repo-stat/proto/processor";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "repo-stat/proto/processor";
 
 service Processor{
   rpc GetInfo(Data) returns (Repo);
