@@ -18,11 +18,13 @@ jobs:
         id: extract
         run: |
           BRANCH="${{ github.ref_name }}"
-          TASK=$(echo "$BRANCH" | grep -oE 'task[0-9]+' || echo "")
-          if [ -z "$TASK" ]; then
-            echo "Branch name does not contain taskX pattern"
+          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
+          if [ -z "$NUMBER" ]; then
+            echo "Branch name does not contain a number: $BRANCH"
             exit 1
           fi
+          TASK="task$NUMBER"
+          echo "Extracted task: $TASK (from branch $BRANCH)"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-go@v5
@@ -60,11 +62,13 @@ jobs:
         id: extract
         run: |
           BRANCH="${{ github.ref_name }}"
-          TASK=$(echo "$BRANCH" | grep -oE 'task[0-9]+' || echo "")
-          if [ -z "$TASK" ]; then
-            echo "Branch name does not contain taskX pattern"
+          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
+          if [ -z "$NUMBER" ]; then
+            echo "Branch name does not contain a number: $BRANCH"
             exit 1
           fi
+          TASK="task$NUMBER"
+          echo "Extracted task: $TASK (from branch $BRANCH)"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - name: Integration tests
