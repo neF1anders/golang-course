@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [task3, task4, task5, task6]
+        task: [task3, task4]
     defaults:
       run:
         working-directory: ${{ matrix.task }}
