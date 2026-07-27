@@ -7,16 +7,15 @@ import (
 	"os"
 	"os/signal"
 	"repo-stat/collector/config"
-	"repo-stat/platform/grpcserver"
 	"repo-stat/platform/logger"
 
+	"repo-stat/collector/internal/adapter/broker"
 	"repo-stat/collector/internal/adapter/github"
 	"repo-stat/collector/internal/adapter/grpc"
+	"repo-stat/collector/internal/controller/consumer"
+	"repo-stat/collector/internal/controller/producer"
 
-	deliverygrpc "repo-stat/collector/internal/controller/grpc"
 	"repo-stat/collector/internal/usecase"
-
-	pb "repo-stat/proto/collector"
 )
 
 func run(ctx context.Context) error {
@@ -37,22 +36,28 @@ func run(ctx context.Context) error {
 		log.Info(fmt.Sprintf("unsuccessful connection to subscribe: %s", err))
 	}
 
-	getRepoInfoUseCase := usecase.NewGetRepoInfoUseCase(githubClient)
+	kafkaProducer := broker.NewProducer([]string{cfg.Kafka.Brokers}, cfg.Kafka.OutputTopic, log)
+	defer kafkaProducer.Close()
+
+	kafkaPublisher := producer.NewResultPublisher(kafkaProducer, cfg.Kafka.OutputTopic)
+
 	getSubInfoUseCase := usecase.NewGetSubInfoUseCase(githubClient, subscribeClient)
+	getAndPublishUseCase := usecase.NewGetAndPublishUseCase(getSubInfoUseCase, kafkaPublisher)
 
-	collectorServer := deliverygrpc.NewCollectorServer(getRepoInfoUseCase, getSubInfoUseCase)
+	updateScheduler := consumer.NewScheduler(getAndPublishUseCase, cfg.Kafka.Interval)
+	messageHandler := consumer.NewOrderMessageHandler(getAndPublishUseCase)
 
-	srv, err := grpcserver.New(cfg.GRPC.Address)
+	kafkaConsumer, err := broker.NewConsumer([]string{cfg.Kafka.Brokers}, cfg.Kafka.Group, cfg.Kafka.InputTopic, messageHandler, log)
 	if err != nil {
-		return fmt.Errorf("init grpc server: %w", err)
+		log.Error("failed to initialize consumer", "error", err)
+		return err
 	}
-	pb.RegisterCollectorServer(srv.GRPC(), collectorServer)
-
-	log.Info(fmt.Sprintf("Collector gRPC server listening on :%v", cfg.GRPC.Address))
-	if err := srv.Run(ctx); err != nil {
-		return fmt.Errorf("run grpc server: %w", err)
+	defer kafkaConsumer.Stop()
+	if err := kafkaConsumer.Start(ctx); err != nil {
+		return err
 	}
-
+	updateScheduler.Start(ctx)
+	<-ctx.Done()
 	return nil
 }
 

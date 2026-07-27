@@ -5,6 +5,13 @@ grpc:
   address: "localhost:8084"
   timeout: "5s"
 
+kafka:
+  brokers: "kafka:9092"
+  group: "collector-group"
+  intopic: "collect-commands"
+  outtopic: "collect-results"
+  auto_update_interval: "15s"
+
 logger:
   log_level: "DEBUG"
 
