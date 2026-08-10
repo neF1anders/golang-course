@@ -10,12 +10,14 @@ import (
 	"repo-stat/api/internal/controller/http"
 	"repo-stat/platform/httpserver"
 	"repo-stat/platform/logger"
+
+	_ "repo-stat/api/docs"
 )
 
 func run(ctx context.Context) error {
 	// config
 	var configPath string
-	flag.StringVar(&configPath, "config", "config.yaml", "server configuration file")
+	flag.StringVar(&configPath, "config", "api/config/config.yaml", "server configuration file")
 	flag.Parse()
 
 	cfg := config.MustLoad(configPath)
@@ -35,13 +37,19 @@ func run(ctx context.Context) error {
 	}
 
 	// server
+	log.Info(fmt.Sprintf("Api http server listening on :%v", cfg.HTTP.Address))
 	srv := httpserver.New(cfg.HTTP, handler)
 	if err := srv.Run(ctx); err != nil {
 		return fmt.Errorf("run http server: %w", err)
 	}
+
 	return nil
 }
 
+// @title           Repo Stat API
+// @version         1.0
+// @description     API for repository statistics
+// @BasePath        /
 func main() {
 	ctx := context.Background()
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)

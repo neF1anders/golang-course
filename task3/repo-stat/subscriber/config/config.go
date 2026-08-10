@@ -11,7 +11,7 @@ type App struct {
 }
 
 type Services struct {
-	API string `yaml:"api" env:"API_ADDRESS" env-default:"localhost:8080"`
+	API string `yaml:"api" env:"API_ADDRESS" env-default:"localhost:8081"`
 }
 
 type Config struct {

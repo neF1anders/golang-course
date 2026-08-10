@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package collector.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "repo-stat/proto/collector"; 
+
+service Collector{
+  rpc GetInfo(Data) returns (Repo) {}
+}
+message Data {
+  string owner = 1;
+  string repo = 2;
+}
+message Repo {
+  string name = 1;
+  string description = 2;
+  int32 stars = 3;
+  int32 forks = 4;
+  google.protobuf.Timestamp date = 5;
+}

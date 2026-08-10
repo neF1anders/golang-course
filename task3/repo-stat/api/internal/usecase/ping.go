@@ -5,20 +5,20 @@ import (
 	"repo-stat/api/internal/domain"
 )
 
-type Pinger interface {
-	Ping(ctx context.Context) domain.PingStatus
-}
-
 type Ping struct {
-	pinger Pinger
+	processor_pinger  Pinger
+	subscriber_pinger Pinger
 }
 
-func NewPing(pinger Pinger) *Ping {
+func NewPing(processor_pinger Pinger, subscriber_pinger Pinger) *Ping {
 	return &Ping{
-		pinger: pinger,
+		processor_pinger:  processor_pinger,
+		subscriber_pinger: subscriber_pinger,
 	}
 }
 
-func (u *Ping) Execute(ctx context.Context) domain.PingStatus {
-	return u.pinger.Ping(ctx)
+func (u *Ping) Execute(ctx context.Context) (domain.PingStatus, domain.PingStatus) {
+	processor_ping, _ := u.processor_pinger.Ping(ctx)
+	subscriber_ping, _ := u.subscriber_pinger.Ping(ctx)
+	return processor_ping, subscriber_ping
 }
