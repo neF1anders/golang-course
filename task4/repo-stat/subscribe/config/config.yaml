@@ -1,0 +1,21 @@
+app:
+  app_name: "repo-stat-subscriber"
+
+grpc:
+  address: "localhost:8085"
+  timeout: "5s"
+
+logger:
+  log_level: "DEBUG"
+
+database:
+  host: "postgres"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  dbname: "subscriptions"
+  sslmode: "disable"
+
+services:
+  api: "api:8081"
+  collector: "collector:8084"
