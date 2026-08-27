@@ -90,7 +90,6 @@ func NewProducer(brokers []string, topic string, log *slog.Logger) *Producer {
 }
 func (p *Producer) Publish(ctx context.Context, topic string, key, value []byte) error {
 	msg := kafka.Message{
-		Topic: topic,
 		Key:   key,
 		Value: value,
 	}

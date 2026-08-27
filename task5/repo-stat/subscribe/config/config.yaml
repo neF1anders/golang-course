@@ -9,9 +9,9 @@ logger:
   log_level: "DEBUG"
 
 database:
-  host: "postgres"
+  host: "postgres_subscriptions"
   port: 5432
-  user: "postgres"
+  user: "postgres_subscriptions"
   password: "postgres"
   dbname: "subscriptions"
   sslmode: "disable"

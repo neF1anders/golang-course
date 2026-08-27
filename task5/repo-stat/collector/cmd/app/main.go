@@ -38,14 +38,16 @@ func run(ctx context.Context) error {
 
 	kafkaProducer := broker.NewProducer([]string{cfg.Kafka.Brokers}, cfg.Kafka.OutputTopic, log)
 	defer kafkaProducer.Close()
+	log.Debug("adapters are loaded successfully")
 
 	kafkaPublisher := producer.NewResultPublisher(kafkaProducer, cfg.Kafka.OutputTopic)
-
 	getSubInfoUseCase := usecase.NewGetSubInfoUseCase(githubClient, subscribeClient)
 	getAndPublishUseCase := usecase.NewGetAndPublishUseCase(getSubInfoUseCase, kafkaPublisher)
+	log.Debug("usecases are loaded successfully")
 
 	updateScheduler := consumer.NewScheduler(getAndPublishUseCase, cfg.Kafka.Interval)
 	messageHandler := consumer.NewOrderMessageHandler(getAndPublishUseCase)
+	log.Debug("controllers are loaded successfully")
 
 	kafkaConsumer, err := broker.NewConsumer([]string{cfg.Kafka.Brokers}, cfg.Kafka.Group, cfg.Kafka.InputTopic, messageHandler, log)
 	if err != nil {
@@ -54,9 +56,11 @@ func run(ctx context.Context) error {
 	}
 	defer kafkaConsumer.Stop()
 	if err := kafkaConsumer.Start(ctx); err != nil {
+		log.Error("failed to start kafka consumer", "error", err)
 		return err
 	}
 	updateScheduler.Start(ctx)
+	log.Info("collector is up successfully")
 	<-ctx.Done()
 	return nil
 }

@@ -15,7 +15,7 @@ func NewOrderMessageHandler(collectAndPublishUC *usecase.GetAndPublishUseCase) *
 }
 func (h *OrderMessageHandler) Handle(ctx context.Context, raw []byte) error {
 	var cmdDTO struct {
-		Action string `json:"action"`
+		Command string `json:"command"`
 	}
 	if err := json.Unmarshal(raw, &cmdDTO); err != nil {
 		return err
