@@ -1,4 +1,39 @@
 services:
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   api:
     image: api:latest
     build:
@@ -58,7 +93,10 @@ services:
       - API_ADDRESS=api:8081
       - COLLECTOR_ADDRESS=collector:8084
     depends_on:
-      - collector
+      postgres_info:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 
 
   collector:
@@ -76,6 +114,9 @@ services:
       - LISTEN_ADDRESS=:8084
       - API_ADDRESS=api:8081
       - PROCESSOR_ADDRESS=processor:8083
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 
   subscribe:
@@ -94,27 +135,45 @@ services:
       - API_ADDRESS=api:8081
       - COLLECTOR_ADDRESS=collector:8084
     depends_on:
-      - collector
-      - api
-      - postgres
+      postgres_subscriptions:
+        condition: service_healthy
 
-  postgres:
+  postgres_subscriptions:
     image: postgres:16-alpine
-    container_name: postgres
+    container_name: postgres_subscriptions
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: postgres_subscriptions
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: subscriptions
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_subscriptions:/var/lib/postgresql/subscriptions
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d subscriptions"]
+      test: ["CMD-SHELL", "pg_isready -U postgres_subscriptions -d subscriptions"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres_info:
+    image: postgres:16-alpine
+    container_name: postgres_info
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres_info
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: info
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_info:/var/lib/postgresql/info
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_info -d info"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  postgres_data:
+  postgres_subscriptions:
+  postgres_info:

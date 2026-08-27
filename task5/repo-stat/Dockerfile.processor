@@ -21,5 +21,7 @@ RUN cd /src && go build -o /processor processor/cmd/app/main.go
 FROM scratch
 
 COPY --from=build /processor /processor
+COPY --from=build /src/processor/db/migrations /db/migrations
+COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ENTRYPOINT ["/processor", "-config", "/config.yaml"]
