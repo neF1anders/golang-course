@@ -9,10 +9,15 @@ import (
 	"repo-stat/platform/grpcserver"
 	"repo-stat/platform/logger"
 	"repo-stat/processor/config"
-	"repo-stat/processor/internal/adapter/collector"
+	"repo-stat/processor/internal/adapter/broker"
+	"repo-stat/processor/internal/adapter/postgres"
 	grpccontroller "repo-stat/processor/internal/controller/grpc"
 	"repo-stat/processor/internal/usecase"
 	pb "repo-stat/proto/processor"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func run(ctx context.Context) error {
@@ -26,13 +31,42 @@ func run(ctx context.Context) error {
 	log.Info("starting processor server...")
 	log.Debug("debug messages are enabled")
 
-	CollectorClient, err := collector.NewClient(cfg.Services.COLLECTOR, log)
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		cfg.Database.User, cfg.Database.Password, cfg.Database.Host,
+		cfg.Database.Port, cfg.Database.DBname, cfg.Database.SSLmode)
+	m, err := migrate.New("file://db/migrations", dsn)
 	if err != nil {
-		log.Info(fmt.Sprintf("unsuccessful connection to collector: %s", err))
+		return fmt.Errorf("create migrate.New: %w", err)
+	}
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("up migrate: %w", err)
+	}
+	pgclient, err := postgres.NewPostgresClient(ctx, dsn) //infra
+	if err != nil {
+		return fmt.Errorf("create PostgreSQL client: %w", err)
 	}
 
+	kafkaProducer := broker.NewProducer([]string{cfg.Kafka.Brokers}, cfg.Kafka.OutputTopic, log)
+	defer kafkaProducer.Close()
+
+	dbUseCase := usecase.NewDBUseCase(pgclient)
 	pingUseCase := usecase.NewPing()
-	fetchUseCase := usecase.NewFetch(CollectorClient)
+	fetchUseCase := usecase.NewFetchUC(dbUseCase, kafkaProducer)
+
+	kafkaConsumer, err := broker.NewConsumer(
+		[]string{cfg.Kafka.Brokers},
+		cfg.Kafka.Group,
+		cfg.Kafka.InputTopic,
+		dbUseCase,
+		log,
+	)
+	if err != nil {
+		return fmt.Errorf("kafka consumer: %w", err)
+	}
+	defer kafkaConsumer.Stop()
+	if err := kafkaConsumer.Start(ctx); err != nil {
+		return err
+	}
 
 	processorHandler := grpccontroller.NewProcessorServer(log, fetchUseCase, pingUseCase)
 

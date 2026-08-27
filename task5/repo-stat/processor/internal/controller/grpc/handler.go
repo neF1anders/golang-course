@@ -12,11 +12,11 @@ import (
 type ProcessorServer struct {
 	pb.UnimplementedProcessorServer
 	log   *slog.Logger
-	fetch *usecase.Fetch
+	fetch *usecase.FetchUseCase
 	ping  *usecase.Ping
 }
 
-func NewProcessorServer(log *slog.Logger, fetch *usecase.Fetch, ping *usecase.Ping) *ProcessorServer {
+func NewProcessorServer(log *slog.Logger, fetch *usecase.FetchUseCase, ping *usecase.Ping) *ProcessorServer {
 	return &ProcessorServer{
 		log:   log,
 		fetch: fetch,
@@ -24,21 +24,22 @@ func NewProcessorServer(log *slog.Logger, fetch *usecase.Fetch, ping *usecase.Pi
 	}
 }
 
-func (s *ProcessorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, error) {
-	s.log.Debug("processor fetch request received")
-	repoInfo, err := s.fetch.GetInfo(ctx, req.Owner, req.Repo)
-	if err != nil {
-		return nil, err
+/*
+	func (s *ProcessorServer) GetInfo(ctx context.Context, req *pb.Data) (*pb.Repo, error) {
+		s.log.Debug("processor fetch request received")
+		repoInfo, err := s.fetch.GetInfo(ctx, req.Owner, req.Repo)
+		if err != nil {
+			return nil, err
+		}
+		return &pb.Repo{
+			Name:        repoInfo.Name,
+			Description: repoInfo.Description,
+			Stars:       int32(repoInfo.Stars),
+			Forks:       int32(repoInfo.Forks),
+			Date:        timestamppb.New(repoInfo.Date),
+		}, nil
 	}
-	return &pb.Repo{
-		Name:        repoInfo.Name,
-		Description: repoInfo.Description,
-		Stars:       int32(repoInfo.Stars),
-		Forks:       int32(repoInfo.Forks),
-		Date:        timestamppb.New(repoInfo.Date),
-	}, nil
-}
-
+*/
 func (s *ProcessorServer) GetSubInfo(ctx context.Context, req *pb.Empty) (*pb.Repos, error) {
 	s.log.Debug("processor sub-fetch request received")
 	repoInfo, err := s.fetch.GetSubInfo(ctx)
