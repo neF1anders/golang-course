@@ -8,23 +8,20 @@ on:
 permissions:
   contents: read
 
+env:
+  TASK_NUMBER: 5
+
 jobs:
   lint-and-unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
-      - name: Extract task number from branch name
-        id: extract
+      - name: Set working directory
+        id: paths
         run: |
-          BRANCH="${{ github.ref_name }}"
-          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
-          if [ -z "$NUMBER" ]; then
-            echo "Branch name does not contain a number: $BRANCH"
-            exit 1
-          fi
-          TASK="task$NUMBER"
-          echo "Extracted task: $TASK (from branch $BRANCH)"
+          TASK="task${{ env.TASK_NUMBER }}"
+          echo "Extracted task: $TASK"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-go@v5
@@ -62,17 +59,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Extract task number from branch name
-        id: extract
+      - name: Set working directory
+        id: paths
         run: |
-          BRANCH="${{ github.ref_name }}"
-          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
-          if [ -z "$NUMBER" ]; then
-            echo "Branch name does not contain a number: $BRANCH"
-            exit 1
-          fi
-          TASK="task$NUMBER"
-          echo "Extracted task: $TASK (from branch $BRANCH)"
+          TASK="task${{ env.TASK_NUMBER }}"
+          echo "Extracted task: $TASK"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - name: Integration tests
