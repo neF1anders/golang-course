@@ -1,0 +1,27 @@
+app:
+  app_name: "repo-stat-processor"
+
+grpc:
+  address: "localhost:8083"
+  timeout: "5s"
+
+kafka:
+  brokers: "kafka:9092"
+  group: "collector-group"
+  outtopic: "collect-commands"
+  intopic: "collect-results"
+  
+database:
+  host: "postgres_info"
+  port: 5432
+  user: "postgres_info"
+  password: "postgres"
+  dbname: "info"
+  sslmode: "disable"
+
+logger:
+  log_level: "DEBUG"
+
+services:
+  api: "api:8081"
+  collector : "collector:8084"

@@ -1,0 +1,200 @@
+basePath: /
+definitions:
+  dto.PingResponse:
+    properties:
+      services:
+        items:
+          $ref: '#/definitions/dto.ServiceStatus'
+        type: array
+      status:
+        type: string
+    type: object
+  dto.Repo:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      forks:
+        type: integer
+      full_name:
+        type: string
+      stars:
+        type: integer
+    type: object
+  dto.Repos:
+    properties:
+      repositories:
+        items:
+          $ref: '#/definitions/dto.Repo'
+        type: array
+    type: object
+  dto.ServiceStatus:
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.Slug:
+    properties:
+      owner:
+        type: string
+      repo:
+        type: string
+    type: object
+  dto.Slugs:
+    properties:
+      subscriptions:
+        items:
+          $ref: '#/definitions/dto.Slug'
+        type: array
+    type: object
+info:
+  contact: {}
+  description: API for repository statistics
+  title: Repo Stat API
+  version: "2.0"
+paths:
+  /api/ping:
+    get:
+      description: Check processor and subscriber health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PingResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/dto.PingResponse'
+      summary: Ping services
+      tags:
+      - ping
+  /subscriptions:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an existing subscription
+      parameters:
+      - description: GitHub repo owner
+        in: query
+        name: owner
+        required: true
+        type: string
+      - description: GitHub repo name
+        in: query
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: invalid request body or missing fields
+          schema:
+            type: string
+        "404":
+          description: subscription not found
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Unsubscribe from a repository
+      tags:
+      - subscriptions
+    get:
+      description: Returns the list of all subscribed repositories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Slugs'
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Get subscriptions list
+      tags:
+      - subscriptions
+    post:
+      consumes:
+      - application/json
+      description: Add a new subscription to track a GitHub repository
+      parameters:
+      - description: GitHub repo owner
+        in: query
+        name: owner
+        required: true
+        type: string
+      - description: GitHub repo name
+        in: query
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: invalid request body or missing fields
+          schema:
+            type: string
+        "404":
+          description: repository not found on GitHub
+          schema:
+            type: string
+        "409":
+          description: subscription already exists
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Subscribe to a repository
+      tags:
+      - subscriptions
+  /subscriptions/info:
+    get:
+      description: Get subscribed GitHub repositories information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Repos'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      summary: Get subscribed repositories info
+      tags:
+      - repositories
+swagger: "2.0"

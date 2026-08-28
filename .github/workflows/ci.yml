@@ -8,30 +8,27 @@ on:
 permissions:
   contents: read
 
+env:
+  TASK_NUMBER: 5
+
 jobs:
   lint-and-unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
-      - name: Extract task number from branch name
-        id: extract
+      - name: Set working directory
+        id: paths
         run: |
-          BRANCH="${{ github.ref_name }}"
-          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
-          if [ -z "$NUMBER" ]; then
-            echo "Branch name does not contain a number: $BRANCH"
-            exit 1
-          fi
-          TASK="task$NUMBER"
-          echo "Extracted task: $TASK (from branch $BRANCH)"
+          TASK="task${{ env.TASK_NUMBER }}"
+          echo "Extracted task: $TASK"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ${{ steps.extract.outputs.task }}/repo-stat/go.mod
+          go-version-file: ${{ steps.paths.outputs.task }}/repo-stat/go.mod
           cache: true
-          cache-dependency-path: ${{ steps.extract.outputs.task }}/repo-stat/go.sum
+          cache-dependency-path: ${{ steps.paths.outputs.task }}/repo-stat/go.sum
 
       - name: Install protoc
         run: |
@@ -40,21 +37,21 @@ jobs:
 
       - name: Install tools
         run: make -C repo-stat tools
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Check protobuf generation
         run: |
           make proto
           git diff --exit-code
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Lint
         run: make lint
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Unit
         run: make unit
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
   integration:
     runs-on: ubuntu-latest
@@ -62,21 +59,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Extract task number from branch name
-        id: extract
+      - name: Set working directory
+        id: paths
         run: |
-          BRANCH="${{ github.ref_name }}"
-          NUMBER=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || echo "")
-          if [ -z "$NUMBER" ]; then
-            echo "Branch name does not contain a number: $BRANCH"
-            exit 1
-          fi
-          TASK="task$NUMBER"
-          echo "Extracted task: $TASK (from branch $BRANCH)"
+          TASK="task${{ env.TASK_NUMBER }}"
+          echo "Extracted task: $TASK"
           echo "task=$TASK" >> $GITHUB_OUTPUT
 
       - name: Integration tests
         run: make test
-        working-directory: ${{ steps.extract.outputs.task }}/repo-stat
+        working-directory: ${{ steps.paths.outputs.task }}/repo-stat
         env:
           CONTAINER_RUNTIME: docker
