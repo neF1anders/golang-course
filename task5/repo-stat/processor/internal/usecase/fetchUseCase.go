@@ -27,7 +27,9 @@ func (f *FetchUseCase) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
 	if len(data) > 0 {
 		return data, nil
 	}
-	f.producer.Publish(ctx)
+	if err = f.producer.Publish(ctx); err != nil {
+		return nil, err
+	}
 	for i := 0; i < 5; i++ {
 		select {
 		case <-ctx.Done():

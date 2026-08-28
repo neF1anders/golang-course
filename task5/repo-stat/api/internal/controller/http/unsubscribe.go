@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"repo-stat/api/internal/domain"
@@ -47,17 +46,8 @@ func NewUnsubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase
 		if err != nil {
 			writeGRPCError(w, err)
 			log.Error("failed to unsubscribe", "owner", req.Owner, "repo", req.Repo, "error", err)
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusNoContent)
 			return
 		}
-		err = json.NewEncoder(w).Encode(map[string]string{
-			"status": "unsubscribed",
-			"owner":  req.Owner,
-			"repo":   req.Repo,
-		})
-		if err != nil {
-			log.Error("failed to encode a response", "error", err)
-		}
+		w.WriteHeader(http.StatusNoContent)
 	}
 }

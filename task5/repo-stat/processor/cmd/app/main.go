@@ -41,14 +41,18 @@ func run(ctx context.Context) error {
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("up migrate: %w", err)
 	}
-	pgclient, err := postgres.NewPostgresClient(log, ctx, dsn) //infra
+	pgclient, err := postgres.NewPostgresClient(log, ctx, dsn)
 	if err != nil {
 		return fmt.Errorf("create PostgreSQL client: %w", err)
 	}
 
 	kafkaProducer := broker.NewProducer([]string{cfg.Kafka.Brokers}, cfg.Kafka.OutputTopic, log)
-	defer kafkaProducer.Close()
-
+	defer func() {
+		err := kafkaProducer.Close()
+		if err != nil {
+			log.Error("failed to close producer", "error", err)
+		}
+	}()
 	dbUseCase := usecase.NewDBUseCase(pgclient)
 	pingUseCase := usecase.NewPing()
 	fetchUseCase := usecase.NewFetchUC(dbUseCase, kafkaProducer)
@@ -63,7 +67,12 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("kafka consumer: %w", err)
 	}
-	defer kafkaConsumer.Stop()
+	defer func() {
+		err := kafkaConsumer.Stop()
+		if err != nil {
+			log.Error("failed to close consumer", "error", err)
+		}
+	}()
 	if err := kafkaConsumer.Start(ctx); err != nil {
 		return err
 	}

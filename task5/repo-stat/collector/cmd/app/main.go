@@ -37,7 +37,12 @@ func run(ctx context.Context) error {
 	}
 
 	kafkaProducer := broker.NewProducer([]string{cfg.Kafka.Brokers}, cfg.Kafka.OutputTopic, log)
-	defer kafkaProducer.Close()
+	defer func() {
+		err := kafkaProducer.Close()
+		if err != nil {
+			log.Error("failed to close producer", "error", err)
+		}
+	}()
 	log.Debug("adapters are loaded successfully")
 
 	kafkaPublisher := producer.NewResultPublisher(kafkaProducer, cfg.Kafka.OutputTopic)
@@ -54,7 +59,12 @@ func run(ctx context.Context) error {
 		log.Error("failed to initialize consumer", "error", err)
 		return err
 	}
-	defer kafkaConsumer.Stop()
+	defer func() {
+		err := kafkaConsumer.Stop()
+		if err != nil {
+			log.Error("failed to close consumer", "error", err)
+		}
+	}()
 	if err := kafkaConsumer.Start(ctx); err != nil {
 		log.Error("failed to start kafka consumer", "error", err)
 		return err

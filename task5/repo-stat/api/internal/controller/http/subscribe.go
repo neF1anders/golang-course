@@ -52,7 +52,7 @@ func NewSubscribeHandler(log *slog.Logger, retriever *usecase.RetrieverUseCase) 
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		err = json.NewEncoder(w).Encode(map[string]string{
 			"status": "subscribed",
 			"owner":  req.Owner,
