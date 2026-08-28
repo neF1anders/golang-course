@@ -5,7 +5,7 @@ import "time"
 type Repo struct {
 	Name        string
 	Description string
-	Stars       int
-	Forks       int
+	Stars       int32
+	Forks       int32
 	Date        time.Time
 }

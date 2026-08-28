@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	db "repo-stat/processor/db/sqlc"
 	"repo-stat/processor/internal/domain"
@@ -12,11 +13,12 @@ import (
 )
 
 type PostgresClient struct {
+	log  *slog.Logger
 	pool *pgxpool.Pool
 	q    *db.Queries
 }
 
-func NewPostgresClient(ctx context.Context, dsn string) (*PostgresClient, error) {
+func NewPostgresClient(log *slog.Logger, ctx context.Context, dsn string) (*PostgresClient, error) {
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init connection pool, %w", err)
@@ -25,6 +27,7 @@ func NewPostgresClient(ctx context.Context, dsn string) (*PostgresClient, error)
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 	return &PostgresClient{
+		log:  log,
 		pool: pool,
 		q:    db.New(pool),
 	}, nil
@@ -42,11 +45,15 @@ func (r *PostgresClient) List(ctx context.Context) ([]domain.Repo, error) {
 	}
 	slugs := make([]domain.Repo, 0, len(rows))
 	for _, row := range rows {
+		r.log.Info("db adapter is called with list method",
+			"values in the repo",
+			fmt.Sprintf("Stars: %v, Forks: %v", row.Stars, row.Forks),
+		)
 		slugs = append(slugs, domain.Repo{
 			Name:        row.Name,
 			Description: row.Description.String,
-			Stars:       int(row.Stars.Int32),
-			Forks:       int(row.Forks.Int32),
+			Stars:       int32(row.Stars.Int32),
+			Forks:       int32(row.Forks.Int32),
 			Date:        row.Date.Time,
 		})
 	}
@@ -60,15 +67,27 @@ func (r *PostgresClient) Push(ctx context.Context, repo domain.Repo) error {
 		forks pgtype.Int4
 		date  pgtype.Timestamptz
 	)
+	r.log.Info("db adapter is called with push method",
+		"values in the repo",
+		fmt.Sprintf("Stars: %v, Forks: %v", repo.Stars, repo.Forks),
+	)
 	_ = desc.Scan(repo.Description)
-	_ = stars.Scan(repo.Stars)
-	_ = forks.Scan(repo.Forks)
+	if err := stars.Scan(repo.Stars); err != nil {
+		r.log.Error("scan failed", "error", err, "value", repo.Stars)
+	}
+	if err := forks.Scan(repo.Forks); err != nil {
+		r.log.Error("scan failed", "error", err, "value", repo.Forks)
+	}
 	_ = date.Scan(repo.Date)
+	r.log.Info("db adapter has called scan method to convert data types",
+		"result of the scan",
+		fmt.Sprintf("Stars: %v, Forks: %v", stars, forks),
+	)
 	err := r.q.Push(ctx, db.PushParams{
 		Name:        repo.Name,
 		Description: desc,
-		Stars:       stars,
-		Forks:       forks,
+		Stars:       pgtype.Int4{Int32: int32(repo.Stars), Valid: true},
+		Forks:       pgtype.Int4{Int32: int32(repo.Forks), Valid: true},
 		Date:        date,
 	})
 	if err != nil {

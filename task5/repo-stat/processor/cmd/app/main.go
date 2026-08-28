@@ -41,7 +41,7 @@ func run(ctx context.Context) error {
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("up migrate: %w", err)
 	}
-	pgclient, err := postgres.NewPostgresClient(ctx, dsn) //infra
+	pgclient, err := postgres.NewPostgresClient(log, ctx, dsn) //infra
 	if err != nil {
 		return fmt.Errorf("create PostgreSQL client: %w", err)
 	}

@@ -34,7 +34,7 @@ func (f *FetchUseCase) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
 			return nil, ctx.Err()
 		case <-time.After(500 * time.Millisecond):
 			data, err := f.dbUC.List(ctx)
-			if err == nil && len(data) > 0 {
+			if err == nil {
 				return data, nil
 			}
 		}

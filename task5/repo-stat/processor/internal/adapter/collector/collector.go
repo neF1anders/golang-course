@@ -45,8 +45,8 @@ func (c *Client) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, 
 	return domain.Repo{
 		Name:        data.Name,
 		Description: data.Description,
-		Stars:       int(data.Stars),
-		Forks:       int(data.Forks),
+		Stars:       data.Stars,
+		Forks:       data.Forks,
 		Date:        data.Date.AsTime(),
 	}, nil
 }
@@ -62,8 +62,8 @@ func (c *Client) GetSubInfo(ctx context.Context) ([]*domain.Repo, error) {
 		res = append(res, &domain.Repo{
 			Name:        el.Name,
 			Description: el.Description,
-			Stars:       int(el.Stars),
-			Forks:       int(el.Forks),
+			Stars:       el.Stars,
+			Forks:       el.Forks,
 			Date:        el.Date.AsTime(),
 		})
 	}
