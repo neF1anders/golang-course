@@ -26,9 +26,9 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ${{ steps.extract.outputs.task }}/repo-stat/go.mod
+          go-version-file: ${{ steps.paths.outputs.task }}/repo-stat/go.mod
           cache: true
-          cache-dependency-path: ${{ steps.extract.outputs.task }}/repo-stat/go.sum
+          cache-dependency-path: ${{ steps.paths.outputs.task }}/repo-stat/go.sum
 
       - name: Install protoc
         run: |
@@ -37,21 +37,21 @@ jobs:
 
       - name: Install tools
         run: make -C repo-stat tools
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Check protobuf generation
         run: |
           make proto
           git diff --exit-code
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Lint
         run: make lint
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
       - name: Unit
         run: make unit
-        working-directory: ${{ steps.extract.outputs.task }}
+        working-directory: ${{ steps.paths.outputs.task }}
 
   integration:
     runs-on: ubuntu-latest
@@ -68,6 +68,6 @@ jobs:
 
       - name: Integration tests
         run: make test
-        working-directory: ${{ steps.extract.outputs.task }}/repo-stat
+        working-directory: ${{ steps.paths.outputs.task }}/repo-stat
         env:
           CONTAINER_RUNTIME: docker
