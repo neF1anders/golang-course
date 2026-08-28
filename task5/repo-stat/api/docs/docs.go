@@ -41,56 +41,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/repositories/info": {
-            "get": {
-                "description": "Get GitHub repository information",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "repositories"
-                ],
-                "summary": "Get repository info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "GitHub repo URL",
-                        "name": "url",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Repo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/subscriptions": {
             "get": {
                 "description": "Returns the list of all subscribed repositories",
@@ -302,13 +252,13 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "forks_count": {
+                "forks": {
                     "type": "integer"
                 },
-                "name": {
+                "full_name": {
                     "type": "string"
                 },
-                "stargazers_count": {
+                "stars": {
                     "type": "integer"
                 }
             }
@@ -362,7 +312,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "2.0",
 	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},

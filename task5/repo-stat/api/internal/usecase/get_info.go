@@ -15,9 +15,6 @@ func NewFetch(fetcher Fetcher) *Fetch {
 	}
 }
 
-func (f *Fetch) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, error) {
-	return f.fetcher.GetInfo(ctx, owner, repo)
-}
 func (f *Fetch) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
 	return f.fetcher.GetSubInfo(ctx)
 }

@@ -43,24 +43,6 @@ func (c *Client) Ping(ctx context.Context) (domain.PingStatus, error) {
 	return domain.PingStatusUp, nil
 }
 
-func (c *Client) GetInfo(ctx context.Context, owner, repo string) (domain.Repo, error) {
-	data, err := c.pb.GetInfo(ctx, &processorpb.Data{
-		Owner: owner,
-		Repo:  repo,
-	})
-	if err != nil {
-		c.log.Error("processor fetch failed", "error", err)
-		return domain.Repo{}, err
-	}
-	return domain.Repo{
-		Name:        data.Name,
-		Description: data.Description,
-		Stars:       int(data.Stars),
-		Forks:       int(data.Forks),
-		Date:        data.Date.AsTime(),
-	}, nil
-}
-
 func (c *Client) GetSubInfo(ctx context.Context) ([]domain.Repo, error) {
 	data, err := c.pb.GetSubInfo(ctx, &processorpb.Empty{})
 	if err != nil {

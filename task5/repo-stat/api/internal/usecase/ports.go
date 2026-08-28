@@ -9,7 +9,6 @@ type Pinger interface {
 	Ping(ctx context.Context) (domain.PingStatus, error)
 }
 type Fetcher interface {
-	GetInfo(ctx context.Context, owner, repo string) (domain.Repo, error)
 	GetSubInfo(ctx context.Context) ([]domain.Repo, error)
 }
 type Retriever interface {

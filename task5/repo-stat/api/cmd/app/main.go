@@ -47,7 +47,7 @@ func run(ctx context.Context) error {
 }
 
 // @title           Repo Stat API
-// @version         1.0
+// @version         2.0
 // @description     API for repository statistics
 // @BasePath        /
 func main() {

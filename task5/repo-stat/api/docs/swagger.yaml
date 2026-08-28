@@ -15,11 +15,11 @@ definitions:
         type: string
       description:
         type: string
-      forks_count:
+      forks:
         type: integer
-      name:
+      full_name:
         type: string
-      stargazers_count:
+      stars:
         type: integer
     type: object
   dto.Repos:
@@ -54,7 +54,7 @@ info:
   contact: {}
   description: API for repository statistics
   title: Repo Stat API
-  version: "1.0"
+  version: "2.0"
 paths:
   /api/ping:
     get:
@@ -73,39 +73,6 @@ paths:
       summary: Ping services
       tags:
       - ping
-  /api/repositories/info:
-    get:
-      consumes:
-      - application/json
-      description: Get GitHub repository information
-      parameters:
-      - description: GitHub repo URL
-        in: query
-        name: url
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Repo'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "404":
-          description: Not Found
-          schema:
-            type: string
-        "503":
-          description: Service Unavailable
-          schema:
-            type: string
-      summary: Get repository info
-      tags:
-      - repositories
   /subscriptions:
     delete:
       consumes:
