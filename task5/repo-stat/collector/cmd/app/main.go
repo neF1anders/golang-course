@@ -30,7 +30,7 @@ func run(ctx context.Context) error {
 	log.Info("starting collector server...")
 	log.Debug("debug messages are enabled")
 
-	githubClient := github.NewClient()
+	githubClient := github.NewClient(log)
 	subscribeClient, err := grpc.NewClient(cfg.Services.Subscribe, log)
 	if err != nil {
 		log.Info(fmt.Sprintf("unsuccessful connection to subscribe: %s", err))
@@ -45,7 +45,7 @@ func run(ctx context.Context) error {
 	getAndPublishUseCase := usecase.NewGetAndPublishUseCase(getSubInfoUseCase, kafkaPublisher)
 	log.Debug("usecases are loaded successfully")
 
-	updateScheduler := consumer.NewScheduler(getAndPublishUseCase, cfg.Kafka.Interval)
+	updateScheduler := consumer.NewScheduler(log, getAndPublishUseCase, cfg.Kafka.Interval)
 	messageHandler := consumer.NewOrderMessageHandler(getAndPublishUseCase)
 	log.Debug("controllers are loaded successfully")
 

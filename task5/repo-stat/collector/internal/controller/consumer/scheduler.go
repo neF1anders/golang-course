@@ -13,8 +13,8 @@ type Scheduler struct {
 	interval  time.Duration
 }
 
-func NewScheduler(collectUC *usecase.GetAndPublishUseCase, interval time.Duration) *Scheduler {
-	return &Scheduler{collectUC: collectUC, interval: interval}
+func NewScheduler(log *slog.Logger, collectUC *usecase.GetAndPublishUseCase, interval time.Duration) *Scheduler {
+	return &Scheduler{log: log, collectUC: collectUC, interval: interval}
 }
 
 func (s *Scheduler) Start(ctx context.Context) {
